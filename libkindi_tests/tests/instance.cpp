@@ -20,19 +20,23 @@ namespace
 	{
 	public:
 		virtual void doSmthing() = 0;
-		virtual ~Abstract(){};
+		virtual ~Abstract()
+		{
+		};
 	};
-	
-	class Concrete : public Abstract
+
+	class Concrete: public Abstract
 	{
 	public:
 		void doSmthing()
 		{
 			if( this == NULL )
-				throw std::runtime_error("this == NULL!");
+				throw std::runtime_error( "this == NULL!" );
 			m_n = 42;
 		}
-		virtual ~Concrete(){};
+		virtual ~Concrete()
+		{
+		};
 		int m_n;
 	};
 }
@@ -43,10 +47,10 @@ BOOST_AUTO_TEST_CASE( instance_of_concrete )
 	rep.add( rep.type<Concrete>().instance( pConcreteInstance ) );
 	Abstract* p1 = rep.construct<Concrete>();
 	Abstract* p2 = rep.construct<Concrete>();
-    BOOST_REQUIRE( p1 == p2 );
-    BOOST_REQUIRE( p2 == pConcreteInstance );
-    p1->doSmthing();
-    p2->doSmthing();
+	BOOST_REQUIRE( p1 == p2 );
+	BOOST_REQUIRE( p2 == pConcreteInstance );
+	p1->doSmthing();
+	p2->doSmthing();
 }
 
 BOOST_AUTO_TEST_CASE( instance_of_abstract )
@@ -56,8 +60,8 @@ BOOST_AUTO_TEST_CASE( instance_of_abstract )
 	rep.add( rep.type<Abstract>().instance( pConcreteInstance ) );
 	Abstract* p1 = rep.construct<Abstract>();
 	Abstract* p2 = rep.construct<Abstract>();
-    BOOST_REQUIRE( p1 == p2 );
-    BOOST_REQUIRE( p2 == pConcreteInstance );
-    p1->doSmthing();
-    p2->doSmthing();
+	BOOST_REQUIRE( p1 == p2 );
+	BOOST_REQUIRE( p2 == pConcreteInstance );
+	p1->doSmthing();
+	p2->doSmthing();
 }

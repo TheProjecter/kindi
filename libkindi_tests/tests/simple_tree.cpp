@@ -22,7 +22,7 @@ namespace
 		void doSmthing()
 		{
 			if( this == NULL )
-				throw std::runtime_error("this == NULL!");
+				throw std::runtime_error( "this == NULL!" );
 			m_n = 42;
 		}
 		int m_n;
@@ -32,7 +32,7 @@ namespace
 	{
 	public:
 		KINDI_CONSTRUCTOR( OneParamConstructor, (DefaultConstructed* pDefaultConstructed) )
-		:m_p(pDefaultConstructed)
+			: m_p( pDefaultConstructed )
 		{
 		}
 		DefaultConstructed* m_p;
@@ -42,7 +42,8 @@ namespace
 	{
 	public:
 		KINDI_CONSTRUCTOR( TwoParamConstructor, (DefaultConstructed* pDefaultConstructed1, DefaultConstructed* pDefaultConstructed2) )
-		:m_p1(pDefaultConstructed1), m_p2(pDefaultConstructed2)
+			: 	m_p1( pDefaultConstructed1 ),
+				m_p2( pDefaultConstructed2 )
 		{
 		}
 		DefaultConstructed* m_p1;
@@ -53,19 +54,19 @@ namespace
 	{
 	public:
 		KINDI_CONSTRUCTOR( TwoNonTrivialParamConstructor, (TwoParamConstructor* pTwoParamConstructor1, TwoParamConstructor* pTwoParamConstructor2) )
-		:m_p1(pTwoParamConstructor1), m_p2(pTwoParamConstructor2)
+			: 	m_p1( pTwoParamConstructor1 ),
+				m_p2( pTwoParamConstructor2 )
 		{
 		}
 		TwoParamConstructor* m_p1;
 		TwoParamConstructor* m_p2;
 	};
 
-
 	class OneParamConstructorNonPod
 	{
 	public:
 		KINDI_CONSTRUCTOR( OneParamConstructorNonPod, (DefaultConstructed* pDefaultConstructed) )
-		:m_p(pDefaultConstructed)
+			: m_p( pDefaultConstructed )
 		{
 		}
 		~OneParamConstructorNonPod()
@@ -74,12 +75,13 @@ namespace
 		}
 		DefaultConstructed* m_p;
 	};
-	
+
 	class TwoNonTrivialParamConstructorNonPod
 	{
 	public:
 		KINDI_CONSTRUCTOR( TwoNonTrivialParamConstructorNonPod, (OneParamConstructorNonPod* pOneParamConstructorNonPod, TwoParamConstructor* pTwoParamConstructor) )
-		:m_p1(pOneParamConstructorNonPod), m_p2(pTwoParamConstructor)
+			: 	m_p1( pOneParamConstructorNonPod ),
+				m_p2( pTwoParamConstructor )
 		{
 		}
 		~TwoNonTrivialParamConstructorNonPod()
@@ -96,8 +98,8 @@ BOOST_AUTO_TEST_CASE( default_constructor )
 	kindi::injector inj;
 	inj.declare_type<DefaultConstructed>();
 	DefaultConstructed* p = inj.construct<DefaultConstructed>();
-    BOOST_REQUIRE( p != NULL );
-    p->doSmthing();
+	BOOST_REQUIRE( p != NULL );
+	p->doSmthing();
 }
 
 BOOST_AUTO_TEST_CASE( one_parameter_constructor )
@@ -105,9 +107,9 @@ BOOST_AUTO_TEST_CASE( one_parameter_constructor )
 	kindi::injector inj;
 	inj.declare_type<OneParamConstructor>();
 	OneParamConstructor* p = inj.construct<OneParamConstructor>();
-    BOOST_REQUIRE( p != NULL );
-    BOOST_REQUIRE( p->m_p != NULL );
-    p->m_p->doSmthing();
+	BOOST_REQUIRE( p != NULL );
+	BOOST_REQUIRE( p->m_p != NULL );
+	p->m_p->doSmthing();
 }
 
 BOOST_AUTO_TEST_CASE( two_parameter_constructor )
@@ -115,11 +117,11 @@ BOOST_AUTO_TEST_CASE( two_parameter_constructor )
 	kindi::injector inj;
 	inj.declare_type<TwoParamConstructor>();
 	TwoParamConstructor* p = inj.construct<TwoParamConstructor>();
-    BOOST_REQUIRE( p != NULL );
-    BOOST_REQUIRE( p->m_p1 != NULL );
-    p->m_p1->doSmthing();
-    BOOST_REQUIRE( p->m_p2 != NULL );
-    p->m_p2->doSmthing();
+	BOOST_REQUIRE( p != NULL );
+	BOOST_REQUIRE( p->m_p1 != NULL );
+	p->m_p1->doSmthing();
+	BOOST_REQUIRE( p->m_p2 != NULL );
+	p->m_p2->doSmthing();
 }
 
 BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor )
@@ -127,17 +129,17 @@ BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor )
 	kindi::injector inj;
 	inj.declare_type<TwoNonTrivialParamConstructor>();
 	TwoNonTrivialParamConstructor* p = inj.construct<TwoNonTrivialParamConstructor>();
-    BOOST_REQUIRE( p != NULL );
-    BOOST_REQUIRE( p->m_p1 != NULL );
-    BOOST_REQUIRE( p->m_p1->m_p1 != NULL );
-    p->m_p1->m_p1->doSmthing();
-    BOOST_REQUIRE( p->m_p1->m_p2 != NULL );
-    p->m_p1->m_p2->doSmthing();
-    BOOST_REQUIRE( p->m_p2 != NULL );
-    BOOST_REQUIRE( p->m_p2->m_p1 != NULL );
-    p->m_p2->m_p1->doSmthing();
-    BOOST_REQUIRE( p->m_p2->m_p2 != NULL );
-    p->m_p2->m_p2->doSmthing();
+	BOOST_REQUIRE( p != NULL );
+	BOOST_REQUIRE( p->m_p1 != NULL );
+	BOOST_REQUIRE( p->m_p1->m_p1 != NULL );
+	p->m_p1->m_p1->doSmthing();
+	BOOST_REQUIRE( p->m_p1->m_p2 != NULL );
+	p->m_p1->m_p2->doSmthing();
+	BOOST_REQUIRE( p->m_p2 != NULL );
+	BOOST_REQUIRE( p->m_p2->m_p1 != NULL );
+	p->m_p2->m_p1->doSmthing();
+	BOOST_REQUIRE( p->m_p2->m_p2 != NULL );
+	p->m_p2->m_p2->doSmthing();
 }
 
 BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor_non_pod )
@@ -145,14 +147,14 @@ BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor_non_pod )
 	kindi::injector inj;
 	inj.declare_type<TwoNonTrivialParamConstructorNonPod>();
 	TwoNonTrivialParamConstructorNonPod* p = inj.construct<TwoNonTrivialParamConstructorNonPod>();
-    BOOST_REQUIRE( p != NULL );
-    BOOST_REQUIRE( p->m_p1 != NULL );
-    BOOST_REQUIRE( p->m_p1->m_p != NULL );
-    p->m_p1->m_p->doSmthing();
-    BOOST_REQUIRE( p->m_p2 != NULL );
-    BOOST_REQUIRE( p->m_p2->m_p1 != NULL );
-    p->m_p2->m_p1->doSmthing();
-    BOOST_REQUIRE( p->m_p2->m_p2 != NULL );
-    p->m_p2->m_p2->doSmthing();
+	BOOST_REQUIRE( p != NULL );
+	BOOST_REQUIRE( p->m_p1 != NULL );
+	BOOST_REQUIRE( p->m_p1->m_p != NULL );
+	p->m_p1->m_p->doSmthing();
+	BOOST_REQUIRE( p->m_p2 != NULL );
+	BOOST_REQUIRE( p->m_p2->m_p1 != NULL );
+	p->m_p2->m_p1->doSmthing();
+	BOOST_REQUIRE( p->m_p2->m_p2 != NULL );
+	p->m_p2->m_p2->doSmthing();
 }
 
