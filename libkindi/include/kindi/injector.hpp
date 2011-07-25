@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "kindi/repository.hpp"
+#include "kindi/repository_impl.hpp"
 
 #ifdef DIF_DEBUG
 #include <string>

@@ -27,7 +27,7 @@ namespace kindi
 		 * specialisation of remove_provider for a provider type
 		 */
 		template <typename T>
-		struct remove_provider<kindi::abstract_typed_provider<T> >
+		struct remove_provider<kindi::provider<T> >
 		{
 			typedef T type;
 		};

@@ -63,7 +63,7 @@ namespace
 	class TypeDependentOnComposedTypeProvider
 	{
 	public:
-		KINDI_CONSTRUCTOR( TypeDependentOnComposedTypeProvider, (kindi::abstract_typed_provider<ComposedType>* pC) )
+		KINDI_CONSTRUCTOR( TypeDependentOnComposedTypeProvider, (kindi::provider<ComposedType>* pC) )
 			: 	m_pC( pC ),
 				m_p1( m_pC->construct() ),
 				m_p2( m_pC->construct() )
@@ -78,7 +78,7 @@ namespace
 			m_p2->doSmthing();
 		}
 
-		kindi::abstract_typed_provider<ComposedType>* m_pC;
+		kindi::provider<ComposedType>* m_pC;
 		ComposedType* m_p1;
 		ComposedType* m_p2;
 	};
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete )
 {
 	kindi::repository rep;
 	rep.add( rep.type<Concrete>() );
-	kindi::abstract_typed_provider<Concrete>* p = rep.construct<kindi::abstract_typed_provider<Concrete> >();
+	kindi::provider<Concrete>* p = rep.construct<kindi::provider<Concrete> >();
 
 	Abstract* p1 = p->construct();
 	Abstract* p2 = p->construct();
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete_with_instance )
 	kindi::repository rep;
 	Concrete* pConcreteInstance = new Concrete();
 	rep.add( rep.type<Concrete>().instance( pConcreteInstance ) );
-	kindi::abstract_typed_provider<Concrete>* p = rep.construct<kindi::abstract_typed_provider<Concrete> >();
+	kindi::provider<Concrete>* p = rep.construct<kindi::provider<Concrete> >();
 
 	Abstract* p1 = p->construct();
 	Abstract* p2 = p->construct();
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE( provider_for_composed )
 {
 	kindi::repository rep;
 	rep.add( rep.type<ComposedType>() );
-	kindi::abstract_typed_provider<ComposedType>* p = rep.construct<kindi::abstract_typed_provider<ComposedType> >();
+	kindi::provider<ComposedType>* p = rep.construct<kindi::provider<ComposedType> >();
 
 	ComposedType* p1 = p->construct();
 	ComposedType* p2 = p->construct();

@@ -16,10 +16,10 @@
 namespace kindi
 {
 	template <typename ConstructedType, typename Constructor>
-	class provider : public abstract_typed_provider<ConstructedType>
+	class generic_provider : public provider<ConstructedType>
 	{
 	public:
-		provider( kindi::repository& r )
+		generic_provider( kindi::repository& r )
 		:m_r( r )
 		{
 		}
@@ -34,7 +34,7 @@ namespace kindi
 	};
 	
 	template <typename ConstructedType>
-	class provider_with_instance : public abstract_typed_provider<ConstructedType>
+	class provider_with_instance : public provider<ConstructedType>
 	{
 	public:
 		provider_with_instance( ConstructedType* instance )

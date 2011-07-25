@@ -12,7 +12,7 @@
 #include "kindi/traits/wrapped_type.hpp"
 #include "kindi/traits/basic_type.hpp"
 #include "kindi/type_info.hpp"
-#include "kindi/repository_fwd.hpp"
+#include "kindi/repository.hpp"
 
 #include <boost/function_types/function_type.hpp>
 #include <boost/function_types/function_arity.hpp>

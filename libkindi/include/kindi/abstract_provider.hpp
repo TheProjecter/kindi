@@ -37,7 +37,7 @@ namespace kindi
 	 * abstract typed base class for providers
 	 */
 	template <typename ConstructedType>
-	class abstract_typed_provider : public abstract_base_provider
+	class provider : public abstract_base_provider
 	{
 	public:
 		/**
@@ -54,7 +54,7 @@ namespace kindi
 		 */
 		virtual ConstructedType* construct() const = 0;
 
-		virtual ~abstract_typed_provider(){}
+		virtual ~provider(){}
 	};
 } // ns kindi
 
