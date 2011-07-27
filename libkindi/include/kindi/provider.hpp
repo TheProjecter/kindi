@@ -15,9 +15,18 @@
 
 namespace kindi
 {
-	template <typename ConstructedType, typename Constructor>
+	template <typename ConstructedType, typename Implementation>
 	class generic_provider : public provider<ConstructedType>
 	{
+		ConstructedType* construct_impl( boost::true_type /* type _is not_ bound to an other */ ) const
+		{
+			return detail::construction_helper<Implementation, typename traits::constructor<Implementation>::type >()( m_r );
+		}
+		ConstructedType* construct_impl( boost::false_type /* type _is_ bound to an other */ ) const
+		{
+			return m_r.get_provider<Implementation>()->construct();
+		}
+		
 	public:
 		generic_provider( kindi::repository& r )
 		:m_r( r )
@@ -26,7 +35,7 @@ namespace kindi
 		
 		virtual ConstructedType* construct() const
 		{
-			return detail::construction_helper<ConstructedType, Constructor>()( m_r );
+			return construct_impl( boost::is_same<ConstructedType, Implementation>() );
 		}
 		
 	private:

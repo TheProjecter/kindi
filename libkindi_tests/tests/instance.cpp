@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( instance_of_concrete )
 {
 	kindi::repository rep;
 	Concrete* pConcreteInstance = new Concrete();
-	rep.add( rep.type<Concrete>().instance( pConcreteInstance ) );
+	rep.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
 	Abstract* p1 = rep.construct<Concrete>();
 	Abstract* p2 = rep.construct<Concrete>();
 	BOOST_REQUIRE( p1 == p2 );
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE( instance_of_abstract )
 {
 	kindi::repository rep;
 	Concrete* pConcreteInstance = new Concrete();
-	rep.add( rep.type<Abstract>().instance( pConcreteInstance ) );
+	rep.add( kindi::type<Abstract>().instance( pConcreteInstance ) );
 	Abstract* p1 = rep.construct<Abstract>();
 	Abstract* p2 = rep.construct<Abstract>();
 	BOOST_REQUIRE( p1 == p2 );

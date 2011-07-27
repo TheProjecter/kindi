@@ -23,3 +23,6 @@ Release
 #doxygen documentation
 doc/doxygen
 
+#eclipse settings directory
+.settings/*.prefs
+

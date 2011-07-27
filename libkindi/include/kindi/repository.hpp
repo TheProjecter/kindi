@@ -38,7 +38,7 @@ namespace kindi
 		 * @deprecated
 		 */
 		template <typename T>
-		void declare_type();
+		void declare_type_if_unknown();
 		
 		/**
 		 * adds a new build_info in the type repository
@@ -47,21 +47,12 @@ namespace kindi
 		void add( const detail::build_info<T, BuildProperties>& rBuilder );
 		
 		/**
-		 * create a structure containing all the necessary information to instanciate a type.
-		 * next thing to do is to register it on the repository
-		 * @return the construction info
-		 */
-		template <typename T>
-		detail::build_info<T> type();
-		
-		/**
 		 * construct an instance of a type
 		 * @return pointer to the new instance
 		 */
 		template <typename T>
 		T* construct();
 
-	private:
 		/**
 		 * get the provider associated to this type
 		 * @return a pointer to the build_info
@@ -69,6 +60,10 @@ namespace kindi
 		 */
 		template <typename T>
 		provider<T>* get_provider();
+		
+	private:
+		template <typename T, typename BuildProperties>
+		void add_if_unknown( const kindi::detail::build_info<T, BuildProperties>& build_info );
 
 	private:
 		typedef std::map<type_info, boost::shared_ptr<abstract_base_provider> > types_map_t;

@@ -9,37 +9,18 @@
 
 #pragma once
 
-#include "kindi/type.hpp"
-#include "kindi/repository_impl.hpp"
-
-#ifdef DIF_DEBUG
-#include <string>
-#endif
+#include "kindi/detail/build_info.hpp"
 
 namespace kindi
 {
-	class injector
+	/**
+	 * create a structure containing all the necessary information to instantiate a type.
+	 * next thing to do is to register it on the repository
+	 * @return the construction info
+	 */
+	template <typename T>
+	detail::build_info<T> type()
 	{
-	public:
-		injector()
-		{
-		}
-		
-		template <typename T>
-		void add( const detail::build_info<T>& rBuilder )
-		{
-			m_r.add( rBuilder );
-		}
-
-		template <typename T>
-		T* construct()
-		{
-			return m_r.construct<T>();
-		}
-
-	private:
-		
-	private:
-		repository m_r;
-	};
+		return detail::build_info<T>();
+	}
 }

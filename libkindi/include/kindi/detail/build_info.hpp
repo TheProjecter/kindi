@@ -34,25 +34,28 @@ namespace kindi
 	{
 		//tags
 		struct has_instance_tag{};
+		struct implementation_tag{};
 		
 		/**
 		 * build properties.
 		 * Holds compile time properties relevant for building a type
 		 */
-		template <typename HasInstance>
+		template <typename HasInstance, typename Implementation>
 		struct build_properties
 		{
 			typedef HasInstance has_instance;
+			typedef Implementation implementation;
 		};
 		/**
 		 * Default properties.
 		 */
-		struct default_build_properties : build_properties<boost::mpl::false_>{};
+		template <typename Implementation>
+		struct default_build_properties : build_properties<boost::mpl::false_, Implementation>{};
 		
 		/**
 		 * Struct holding information needed to build type T and it's dependencies.
 		 */
-		template <typename T, typename BuildProperties = default_build_properties>
+		template <typename T, typename BuildProperties = default_build_properties<T> >
 		class build_info
 		{
 			/**
@@ -100,27 +103,36 @@ namespace kindi
 			: m_instance( rhs.m_instance )
 			{
 			}
-			
 
 			/**
 			 * struct used to easily declare a new build_info<T,BuildProperties> variant with mutated BuildProperties.
 			 * follows overloads for each property.
 			 * think of it has a compile time setter.
 			 */
-			template <typename NewPropertyTag, typename NewPropertyType>
+			template <typename NewPropertyTag, typename NewPropertyType, typename ModifiedBuildProperties = BuildProperties>
 			struct new_properties
 			{
-				typedef build_info<T> type;
+				typedef build_info<T, ModifiedBuildProperties> type;
 			};
 
 			/**
 			 * setter for build_properties::has_instance.
 			 * see generic new_properties 
 			 */
-			template <typename NewPropertyType>
-			struct new_properties<has_instance_tag, NewPropertyType>
+			template <typename NewPropertyType, typename ModifiedBuildProperties>
+			struct new_properties<has_instance_tag, NewPropertyType, ModifiedBuildProperties>
 			{
-				typedef build_info<T, build_properties<NewPropertyType> > type;
+				typedef build_info<T, build_properties<NewPropertyType, typename ModifiedBuildProperties::implementation> > type;
+			};
+
+			/**
+			 * setter for build_properties::implementation.
+			 * see generic new_properties 
+			 */
+			template <typename NewPropertyType, typename ModifiedBuildProperties>
+			struct new_properties<implementation_tag, NewPropertyType, ModifiedBuildProperties>
+			{
+				typedef build_info<T, build_properties<typename ModifiedBuildProperties::has_instance, NewPropertyType> > type;
 			};
 			
 			/**
@@ -133,6 +145,16 @@ namespace kindi
 				typename new_properties<has_instance_tag, boost::mpl::true_>::type b( *this );
 				b.m_instance = pInstance;
 				return b;
+			}
+			
+			/**
+			 * sets an implementation for the type
+			 * @return a new build_info object with the correct implementation
+			 */
+			template <typename Implementation>
+			typename new_properties<implementation_tag, Implementation>::type implementation() const
+			{
+				return typename new_properties<implementation_tag, Implementation>::type( *this );
 			}
 
 			/**

@@ -96,7 +96,7 @@ namespace
 BOOST_AUTO_TEST_CASE( default_constructor )
 {
 	kindi::injector inj;
-	inj.declare_type<DefaultConstructed>();
+	inj.add( kindi::type<DefaultConstructed>() );
 	DefaultConstructed* p = inj.construct<DefaultConstructed>();
 	BOOST_REQUIRE( p != NULL );
 	p->doSmthing();
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE( default_constructor )
 BOOST_AUTO_TEST_CASE( one_parameter_constructor )
 {
 	kindi::injector inj;
-	inj.declare_type<OneParamConstructor>();
+	inj.add( kindi::type<OneParamConstructor>() );
 	OneParamConstructor* p = inj.construct<OneParamConstructor>();
 	BOOST_REQUIRE( p != NULL );
 	BOOST_REQUIRE( p->m_p != NULL );
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE( one_parameter_constructor )
 BOOST_AUTO_TEST_CASE( two_parameter_constructor )
 {
 	kindi::injector inj;
-	inj.declare_type<TwoParamConstructor>();
+	inj.add( kindi::type<TwoParamConstructor>() );
 	TwoParamConstructor* p = inj.construct<TwoParamConstructor>();
 	BOOST_REQUIRE( p != NULL );
 	BOOST_REQUIRE( p->m_p1 != NULL );
@@ -127,7 +127,7 @@ BOOST_AUTO_TEST_CASE( two_parameter_constructor )
 BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor )
 {
 	kindi::injector inj;
-	inj.declare_type<TwoNonTrivialParamConstructor>();
+	inj.add( kindi::type<TwoNonTrivialParamConstructor>() );
 	TwoNonTrivialParamConstructor* p = inj.construct<TwoNonTrivialParamConstructor>();
 	BOOST_REQUIRE( p != NULL );
 	BOOST_REQUIRE( p->m_p1 != NULL );
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor )
 BOOST_AUTO_TEST_CASE( two_non_trivial_parameter_constructor_non_pod )
 {
 	kindi::injector inj;
-	inj.declare_type<TwoNonTrivialParamConstructorNonPod>();
+	inj.add( kindi::type<TwoNonTrivialParamConstructorNonPod>() );
 	TwoNonTrivialParamConstructorNonPod* p = inj.construct<TwoNonTrivialParamConstructorNonPod>();
 	BOOST_REQUIRE( p != NULL );
 	BOOST_REQUIRE( p->m_p1 != NULL );
