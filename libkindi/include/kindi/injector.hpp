@@ -12,10 +12,6 @@
 #include "kindi/type.hpp"
 #include "kindi/detail/repository_impl.hpp"
 
-#ifdef DIF_DEBUG
-#include <string>
-#endif
-
 namespace kindi
 {
 	class injector

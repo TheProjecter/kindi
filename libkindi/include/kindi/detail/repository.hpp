@@ -21,13 +21,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-// debug includes
-#ifdef DIF_DEBUG
-#include <string>
-#include <sstream>
-#include <boost/format.hpp>
-#endif
-
 namespace kindi
 {
 	namespace detail

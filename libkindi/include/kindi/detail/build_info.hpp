@@ -21,11 +21,6 @@
 
 #include <boost/function_types/function_arity.hpp>
 
-#ifdef DIF_DEBUG
-#include <string>
-#include <sstream>
-#endif
-
 namespace kindi
 {
 	namespace detail

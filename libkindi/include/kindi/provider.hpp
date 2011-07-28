@@ -9,10 +9,6 @@
 
 #pragma once
 
-#ifdef DIF_DEBUG
-#include <string>
-#endif
-
 namespace kindi
 {
 	/**
@@ -25,10 +21,6 @@ namespace kindi
 		 * Constructs an instance
 		 */
 		virtual void* construct_untyped() const = 0;
-
-		#ifdef DIF_DEBUG
-		//virtual std::string printDependencies() const = 0;
-		#endif
 
 		virtual ~abstract_base_provider(){}
 	};
