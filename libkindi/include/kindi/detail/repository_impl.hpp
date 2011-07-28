@@ -10,105 +10,20 @@
 #include "kindi/detail/repository.hpp"
 
 #include "kindi/type.hpp"
+
+#include "kindi/traits/constructor.hpp"
+#include "kindi/traits/wrapped_type.hpp"
+
+#include "kindi/detail/auto_recursive_registration.hpp"
 #include "kindi/detail/build_info.hpp"
 #include "kindi/detail/builtin_providers.hpp"
 
-#include "kindi/traits/constructor.hpp"
-#include "kindi/traits/basic_type.hpp"
-#include "kindi/traits/remove_provider.hpp"
-#include "kindi/traits/wrapped_type.hpp"
-
 #include "kindi/detail/debug_template.hpp"
-
-#include <boost/mpl/if.hpp>
-#include <boost/mpl/for_each.hpp>
-#include <boost/mpl/transform.hpp>
-#include <boost/mpl/placeholders.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/assert.hpp>
-
-#include <boost/function_types/parameter_types.hpp>
 
 namespace kindi
 {
 	namespace detail
 	{
-		template <typename T, typename BuildProperties>
-		class recursive_registration
-		{
-		public:
-			recursive_registration( kindi::detail::repository& r )
-				: m_r( r )
-			{
-			}
-			
-			void operator()()
-			{
-				register_type f( m_r );
-				
-				// register each parameter type
-				for_each_ctor_parameter( f );
-				// register bound type
-				// do not register if bound type is equal to self
-				registerBoundType( f, boost::is_same<T, typename BuildProperties::implementation>() );
-			}
-		
-		private:
-			template <typename F>
-			void registerBoundType( F f, boost::true_type ) const
-			{
-				//do nothing
-			}
-			template <typename F>
-			void registerBoundType( F f, boost::false_type ) const
-			{
-				f( type_wrapper<typename BuildProperties::implementation>() );
-			}
-			
-			template <typename F>
-			void for_each_ctor_parameter( const F& f ) const
-			{
-				using namespace boost::mpl::placeholders;	// for _1
-		
-				typedef typename traits::constructor<T>::type constructor_t;
-				
-				// this builds a compile time sequence containing the parameters types
-				typedef typename boost::function_types::parameter_types<constructor_t>::type constructor_parameter_types_t;
-				// now we transform the sequence to wrap the parameters types in a type_wrapper
-				// we do this so that boost::mpl::for_each won't try to instanciate parameters 
-				// because it'll blow if one of the parameters types is not default constructible !
-				typedef typename boost::mpl::transform<constructor_parameter_types_t, traits::wrapped_type<_1> >::type constructor_wrapped_parameter_types_t;
-		
-				// now step through the wrapped parameters types to print them out to the stream
-				boost::mpl::for_each<constructor_wrapped_parameter_types_t>( f );
-			}
-		
-			struct register_type
-			{
-				register_type( kindi::detail::repository& r )
-					: m_r( r )
-				{
-				}
-		
-				template <typename U>
-				void operator()( type_wrapper<U> /*twu*/ )
-				{
-					// first, if U is a provider, get the provided type
-					typedef typename traits::remove_provider<typename traits::basic_type<U>::type>::type provided_type;
-					// register it
-					m_r.declare_type_if_unknown<typename traits::basic_type<provided_type>::type>();
-				}
-				
-				kindi::detail::repository& m_r;
-			};
-			
-		private:
-			/**
-			 * Reference to the types repository
-			 */
-			kindi::detail::repository& m_r;
-		};
-
 		template <typename T, typename Implementation>
 		abstract_base_provider* get_provider( repository& r,
 		                                      T* instance,
@@ -141,7 +56,7 @@ void kindi::detail::repository::add( const kindi::detail::build_info<T, BuildPro
 	typedef typename traits::constructor<T>::type constructor_t;
 	
 	// recursively register parameters types and bound types
-	detail::recursive_registration<T, BuildProperties>( *this )();
+	auto_recursive_registration<T, BuildProperties>( *this )();
 	
 	// creates the provider for the new type
 	abstract_base_provider* pProvider =

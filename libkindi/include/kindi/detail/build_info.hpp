@@ -9,16 +9,14 @@
 
 #pragma once
 
-// inherited class
+#include "kindi/detail/build_properties.hpp"
+
 #include "kindi/traits/constructor.hpp"
 #include "kindi/traits/wrapped_type.hpp"
 
 #include "kindi/detail/debug_template.hpp"
 
 #include <boost/mpl/if.hpp>
-#include <boost/mpl/for_each.hpp>
-#include <boost/mpl/transform.hpp>
-#include <boost/mpl/placeholders.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 #include <boost/function_types/function_arity.hpp>
@@ -32,20 +30,6 @@ namespace kindi
 {
 	namespace detail
 	{
-		//tags
-		struct has_instance_tag{};
-		struct implementation_tag{};
-		
-		/**
-		 * build properties.
-		 * Holds compile time properties relevant for building a type
-		 */
-		template <typename HasInstance, typename Implementation>
-		struct build_properties
-		{
-			typedef HasInstance has_instance;
-			typedef Implementation implementation;
-		};
 		/**
 		 * Default properties.
 		 */
@@ -58,6 +42,27 @@ namespace kindi
 		template <typename T, typename BuildProperties = default_build_properties<T> >
 		class build_info
 		{
+			/**
+			 * self type
+			 */
+			typedef build_info<T, BuildProperties> self_type;
+
+			/**
+			 * Type that is built by this Builder
+			 */
+			typedef T builtType_t;
+
+			/**
+			 * constructor's type
+			 * if there is no constructor defaults to 'void( void )'
+			 */
+			typedef typename traits::constructor<T>::type builtType_constructor_t;
+			
+			/**
+			 * build properties
+			 */
+			typedef BuildProperties build_properties_t;
+			
 			/**
 			 * type used to check that the constructor declaration
 			 * is given for the type and not inherited.
@@ -105,34 +110,15 @@ namespace kindi
 			}
 
 			/**
-			 * struct used to easily declare a new build_info<T,BuildProperties> variant with mutated BuildProperties.
-			 * follows overloads for each property.
-			 * think of it has a compile time setter.
+			 * modifies the properties of this build_info type (produces a new type).
+			 * for the sake of saving a few characters!
+			 * see BuildProperties::new_properties for the gory details
 			 */
-			template <typename NewPropertyTag, typename NewPropertyType, typename ModifiedBuildProperties = BuildProperties>
-			struct new_properties
+			template <typename BuildInfo, typename NewPropertyTag, typename NewPropertyType>
+			struct new_binfo
 			{
-				typedef build_info<T, ModifiedBuildProperties> type;
-			};
-
-			/**
-			 * setter for build_properties::has_instance.
-			 * see generic new_properties 
-			 */
-			template <typename NewPropertyType, typename ModifiedBuildProperties>
-			struct new_properties<has_instance_tag, NewPropertyType, ModifiedBuildProperties>
-			{
-				typedef build_info<T, build_properties<NewPropertyType, typename ModifiedBuildProperties::implementation> > type;
-			};
-
-			/**
-			 * setter for build_properties::implementation.
-			 * see generic new_properties 
-			 */
-			template <typename NewPropertyType, typename ModifiedBuildProperties>
-			struct new_properties<implementation_tag, NewPropertyType, ModifiedBuildProperties>
-			{
-				typedef build_info<T, build_properties<typename ModifiedBuildProperties::has_instance, NewPropertyType> > type;
+				typedef typename BuildProperties::template new_properties<NewPropertyTag, NewPropertyType>::type new_properties_t;
+				typedef build_info<typename BuildInfo::builtType_t, new_properties_t> type;
 			};
 			
 			/**
@@ -140,9 +126,9 @@ namespace kindi
 			 * @param pInstance instance
 			 * @return a new build_info object with the correct instance
 			 */
-			typename new_properties<has_instance_tag, boost::mpl::true_>::type instance( T* pInstance ) const
+			typename new_binfo<self_type, has_instance_tag, boost::mpl::true_>::type instance( T* pInstance ) const
 			{
-				typename new_properties<has_instance_tag, boost::mpl::true_>::type b( *this );
+				typename new_binfo<self_type, has_instance_tag, boost::mpl::true_>::type b( *this );
 				b.m_instance = pInstance;
 				return b;
 			}
@@ -152,26 +138,10 @@ namespace kindi
 			 * @return a new build_info object with the correct implementation
 			 */
 			template <typename Implementation>
-			typename new_properties<implementation_tag, Implementation>::type implementation() const
+			typename new_binfo<self_type, implementation_tag, Implementation>::type implementation() const
 			{
-				return typename new_properties<implementation_tag, Implementation>::type( *this );
+				return typename new_binfo<self_type, implementation_tag, Implementation>::type( *this );
 			}
-
-			/**
-			 * Type that is built by this Builder
-			 */
-			typedef type_wrapper<T> builtType_t;
-
-			/**
-			 * constructor's type
-			 * if there is no constructor defaults to 'void( void )'
-			 */
-			typedef typename traits::constructor<T>::type builtType_constructor_t;
-			
-			/**
-			 * build properties
-			 */
-			typedef BuildProperties build_properties_t;
 			
 			/**
 			 * pointer to the instance if any (see provider_with_instance)
