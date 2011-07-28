@@ -10,7 +10,7 @@
 #pragma once
 
 #include "kindi/type.hpp"
-#include "kindi/repository_impl.hpp"
+#include "kindi/detail/repository_impl.hpp"
 
 #ifdef DIF_DEBUG
 #include <string>
@@ -25,8 +25,8 @@ namespace kindi
 		{
 		}
 		
-		template <typename T>
-		void add( const detail::build_info<T>& rBuilder )
+		template <typename T, typename BuildProperties>
+		void add( const detail::build_info<T, BuildProperties>& rBuilder )
 		{
 			m_r.add( rBuilder );
 		}
@@ -40,6 +40,6 @@ namespace kindi
 	private:
 		
 	private:
-		repository m_r;
+		detail::repository m_r;
 	};
 }

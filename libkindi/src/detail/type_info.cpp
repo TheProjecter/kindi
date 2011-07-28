@@ -11,36 +11,36 @@
 //  Version     : $Revision: 0 $
 // ***************************************************************************
 
-#include "kindi/type_info.hpp"
+#include "kindi/detail/type_info.hpp"
 #include "kindi/detail/demangle.hpp"
 #include <ostream>
 
-bool kindi::type_info::operator<( type_info const & rhs ) const
+bool kindi::detail::type_info::operator<( type_info const & rhs ) const
 								{
 	return m_info->before( *rhs.m_info ) ? true : false;
 }
 
-bool kindi::type_info::operator==( type_info const & rhs ) const
+bool kindi::detail::type_info::operator==( type_info const & rhs ) const
 									{
 	return !( *this < rhs ) && !( rhs < *this );
 }
 
-bool kindi::type_info::operator!=( type_info const & rhs ) const
+bool kindi::detail::type_info::operator!=( type_info const & rhs ) const
 									{
 	return !( *this == rhs );
 }
 
-std::string kindi::type_info::name() const
+std::string kindi::detail::type_info::name() const
 {
 	return m_info->name();
 }
 
-kindi::type_info::type_info()
+kindi::detail::type_info::type_info()
 	: m_info( &typeid(kindi::type_wrapper<void>::type) )
 {
 }
 
-std::ostream& kindi::operator<<( std::ostream & os, const type_info & info )
+std::ostream& kindi::detail::operator<<( std::ostream & os, const type_info & info )
 {
 	return os << detail::demangle( info.name() );
 }

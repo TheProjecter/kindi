@@ -86,9 +86,9 @@ namespace
 
 BOOST_AUTO_TEST_CASE( provider_for_concrete )
 {
-	kindi::repository rep;
-	rep.add( kindi::type<Concrete>() );
-	kindi::provider<Concrete>* p = rep.construct<kindi::provider<Concrete> >();
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	kindi::provider<Concrete>* p = inj.construct<kindi::provider<Concrete> >();
 
 	Abstract* p1 = p->construct();
 	Abstract* p2 = p->construct();
@@ -100,10 +100,10 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete )
 
 BOOST_AUTO_TEST_CASE( provider_for_concrete_with_instance )
 {
-	kindi::repository rep;
+	kindi::injector inj;
 	Concrete* pConcreteInstance = new Concrete();
-	rep.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
-	kindi::provider<Concrete>* p = rep.construct<kindi::provider<Concrete> >();
+	inj.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
+	kindi::provider<Concrete>* p = inj.construct<kindi::provider<Concrete> >();
 
 	Abstract* p1 = p->construct();
 	Abstract* p2 = p->construct();
@@ -116,9 +116,9 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete_with_instance )
 
 BOOST_AUTO_TEST_CASE( provider_for_composed )
 {
-	kindi::repository rep;
-	rep.add( kindi::type<ComposedType>() );
-	kindi::provider<ComposedType>* p = rep.construct<kindi::provider<ComposedType> >();
+	kindi::injector inj;
+	inj.add( kindi::type<ComposedType>() );
+	kindi::provider<ComposedType>* p = inj.construct<kindi::provider<ComposedType> >();
 
 	ComposedType* p1 = p->construct();
 	ComposedType* p2 = p->construct();
@@ -130,9 +130,9 @@ BOOST_AUTO_TEST_CASE( provider_for_composed )
 
 BOOST_AUTO_TEST_CASE( provider_injection )
 {
-	kindi::repository rep;
-	rep.add( kindi::type<TypeDependentOnComposedTypeProvider>() );
-	TypeDependentOnComposedTypeProvider* p = rep.construct<TypeDependentOnComposedTypeProvider>();
+	kindi::injector inj;
+	inj.add( kindi::type<TypeDependentOnComposedTypeProvider>() );
+	TypeDependentOnComposedTypeProvider* p = inj.construct<TypeDependentOnComposedTypeProvider>();
 
 	BOOST_REQUIRE( p->m_p1 != p->m_p2 );
 	p->doSmthing();

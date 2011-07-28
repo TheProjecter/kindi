@@ -58,10 +58,10 @@ namespace
 
 BOOST_AUTO_TEST_CASE( implementation_of_abstract )
 {
-	kindi::repository rep;
-	rep.add( kindi::type<Abstract>().implementation<Concrete>() );
-	Abstract* p1 = rep.construct<Abstract>();
-	Abstract* p2 = rep.construct<Abstract>();
+	kindi::injector inj;
+	inj.add( kindi::type<Abstract>().implementation<Concrete>() );
+	Abstract* p1 = inj.construct<Abstract>();
+	Abstract* p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();
@@ -71,10 +71,10 @@ BOOST_AUTO_TEST_CASE( implementation_of_abstract )
 
 BOOST_AUTO_TEST_CASE( implementation_of_concrete ) // usefull? 
 {
-	kindi::repository rep;
-	rep.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
-	Concrete* p1 = rep.construct<Concrete>();
-	Concrete* p2 = rep.construct<Concrete>();
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
+	Concrete* p1 = inj.construct<Concrete>();
+	Concrete* p2 = inj.construct<Concrete>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();
@@ -84,11 +84,11 @@ BOOST_AUTO_TEST_CASE( implementation_of_concrete ) // usefull?
 
 BOOST_AUTO_TEST_CASE( chained_implementations ) // usefull? 
 {
-	kindi::repository rep;
-	rep.add( kindi::type<Abstract>().implementation<Concrete>() );
-	rep.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
-	Abstract* p1 = rep.construct<Abstract>();
-	Abstract* p2 = rep.construct<Abstract>();
+	kindi::injector inj;
+	inj.add( kindi::type<Abstract>().implementation<Concrete>() );
+	inj.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
+	Abstract* p1 = inj.construct<Abstract>();
+	Abstract* p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();

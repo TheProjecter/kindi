@@ -11,8 +11,8 @@
 
 #include "kindi/traits/wrapped_type.hpp"
 #include "kindi/traits/basic_type.hpp"
-#include "kindi/type_info.hpp"
-#include "kindi/repository.hpp"
+#include "kindi/detail/type_info.hpp"
+#include "kindi/detail/repository.hpp"
 
 #include <boost/function_types/function_type.hpp>
 #include <boost/function_types/function_arity.hpp>
@@ -34,7 +34,7 @@ namespace kindi
 		template <typename T, typename F, int N>
 		struct construction_helper_impl
 		{
-			T* operator()( kindi::repository& /*r*/ )
+			T* operator()( kindi::detail::repository& /*r*/ )
 			{
 				throw std::runtime_error( (boost::format( "Too much arguments in constructor of %s" ) % type_info( typename traits::wrapped_type<T>::type() ) ).str() );
 			}
@@ -43,7 +43,7 @@ namespace kindi
 		template <typename T, typename F>
 		struct construction_helper_impl<T, F, 0>
 		{
-			T* operator()( kindi::repository& /*r*/ )
+			T* operator()( kindi::detail::repository& /*r*/ )
 			{
 				return new T();
 			}
@@ -52,7 +52,7 @@ namespace kindi
 		template <typename T, typename F>
 		struct construction_helper_impl<T, F, 1>
 		{
-			T* operator()( kindi::repository& r )
+			T* operator()( kindi::detail::repository& r )
 			{
 				typedef boost::function_types::parameter_types<F> params;
 				
@@ -68,7 +68,7 @@ namespace kindi
 		template <typename T, typename F>
 		struct construction_helper_impl<T, F, 2>
 		{
-			T* operator()( kindi::repository& r )
+			T* operator()( kindi::detail::repository& r )
 			{
 				typedef boost::function_types::parameter_types<F> params;
 				
@@ -89,7 +89,7 @@ namespace kindi
 		template <typename T, typename F>
 		struct construction_helper
 		{
-			T* operator()( kindi::repository& r )
+			T* operator()( kindi::detail::repository& r )
 			{
 				typedef boost::function_types::function_arity<F> arity;
 				

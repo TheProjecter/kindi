@@ -9,64 +9,52 @@
 
 #pragma once
 
-#include <kindi/abstract_provider.hpp>
-
-#include "kindi/detail/construction_helper.hpp"
+#ifdef DIF_DEBUG
+#include <string>
+#endif
 
 namespace kindi
 {
-	template <typename ConstructedType, typename Implementation>
-	class generic_provider : public provider<ConstructedType>
+	/**
+	 * abstract base class for providers
+	 */
+	class abstract_base_provider
 	{
-		ConstructedType* construct_impl( boost::true_type /* type _is not_ bound to an other */ ) const
-		{
-			return detail::construction_helper<Implementation, typename traits::constructor<Implementation>::type >()( m_r );
-		}
-		ConstructedType* construct_impl( boost::false_type /* type _is_ bound to an other */ ) const
-		{
-			return m_r.get_provider<Implementation>()->construct();
-		}
-		
 	public:
-		generic_provider( kindi::repository& r )
-		:m_r( r )
-		{
-		}
-		
-		virtual ConstructedType* construct() const
-		{
-			return construct_impl( boost::is_same<ConstructedType, Implementation>() );
-		}
-		
-	private:
-		kindi::repository& m_r;
+		/**
+		 * Constructs an instance
+		 */
+		virtual void* construct_untyped() const = 0;
+
+		#ifdef DIF_DEBUG
+		//virtual std::string printDependencies() const = 0;
+		#endif
+
+		virtual ~abstract_base_provider(){}
 	};
-	
+
+	/**
+	 * abstract typed base class for providers
+	 */
 	template <typename ConstructedType>
-	class provider_with_instance : public provider<ConstructedType>
+	class provider : public abstract_base_provider
 	{
 	public:
-		provider_with_instance( ConstructedType* instance )
-		:m_instance( instance )
+		/**
+		 * Constructs an instance
+		 */
+		virtual void* construct_untyped() const
 		{
+			return construct();
 		}
 		
-		virtual ConstructedType* construct() const
-		{
-			return m_instance;
-		}
-		
-	private:
-		ConstructedType* m_instance;
+		/**
+		 * Constructs an instance
+		 * @return pointer to the new instance
+		 */
+		virtual ConstructedType* construct() const = 0;
+
+		virtual ~provider(){}
 	};
-	
-	class provider_provider : public provider_with_instance<abstract_base_provider>
-	{
-	public:
-		provider_provider( abstract_base_provider* pProvider )
-		:provider_with_instance( pProvider )
-		{}
-		
-		virtual ~provider_provider(){}
-	};
-}
+} // ns kindi
+

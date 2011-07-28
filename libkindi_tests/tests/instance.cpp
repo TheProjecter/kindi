@@ -42,11 +42,11 @@ namespace
 }
 BOOST_AUTO_TEST_CASE( instance_of_concrete )
 {
-	kindi::repository rep;
+	kindi::injector inj;
 	Concrete* pConcreteInstance = new Concrete();
-	rep.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
-	Abstract* p1 = rep.construct<Concrete>();
-	Abstract* p2 = rep.construct<Concrete>();
+	inj.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
+	Abstract* p1 = inj.construct<Concrete>();
+	Abstract* p2 = inj.construct<Concrete>();
 	BOOST_REQUIRE( p1 == p2 );
 	BOOST_REQUIRE( p2 == pConcreteInstance );
 	p1->doSmthing();
@@ -55,11 +55,11 @@ BOOST_AUTO_TEST_CASE( instance_of_concrete )
 
 BOOST_AUTO_TEST_CASE( instance_of_abstract )
 {
-	kindi::repository rep;
+	kindi::injector inj;
 	Concrete* pConcreteInstance = new Concrete();
-	rep.add( kindi::type<Abstract>().instance( pConcreteInstance ) );
-	Abstract* p1 = rep.construct<Abstract>();
-	Abstract* p2 = rep.construct<Abstract>();
+	inj.add( kindi::type<Abstract>().instance( pConcreteInstance ) );
+	Abstract* p1 = inj.construct<Abstract>();
+	Abstract* p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 == p2 );
 	BOOST_REQUIRE( p2 == pConcreteInstance );
 	p1->doSmthing();

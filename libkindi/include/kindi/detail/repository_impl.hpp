@@ -7,11 +7,11 @@
 //  See http://code.google.com/p/kindi/ for the library home page.
 // ***************************************************************************
 
-#include "kindi/repository.hpp"
+#include "kindi/detail/repository.hpp"
 
 #include "kindi/type.hpp"
 #include "kindi/detail/build_info.hpp"
-#include "kindi/provider.hpp"
+#include "kindi/detail/builtin_providers.hpp"
 
 #include "kindi/traits/constructor.hpp"
 #include "kindi/traits/basic_type.hpp"
@@ -37,7 +37,7 @@ namespace kindi
 		class recursive_registration
 		{
 		public:
-			recursive_registration( kindi::repository& r )
+			recursive_registration( kindi::detail::repository& r )
 				: m_r( r )
 			{
 			}
@@ -85,7 +85,7 @@ namespace kindi
 		
 			struct register_type
 			{
-				register_type( kindi::repository& r )
+				register_type( kindi::detail::repository& r )
 					: m_r( r )
 				{
 				}
@@ -99,14 +99,14 @@ namespace kindi
 					m_r.declare_type_if_unknown<typename traits::basic_type<provided_type>::type>();
 				}
 				
-				kindi::repository& m_r;
+				kindi::detail::repository& m_r;
 			};
 			
 		private:
 			/**
 			 * Reference to the types repository
 			 */
-			kindi::repository& m_r;
+			kindi::detail::repository& m_r;
 		};
 
 		template <typename T, typename Implementation>
@@ -128,13 +128,13 @@ namespace kindi
 } // ns kindi
 
 template <typename T>
-void kindi::repository::declare_type_if_unknown()
+void kindi::detail::repository::declare_type_if_unknown()
 {
 	add_if_unknown( type<T>() );
 }
 
 template <typename T, typename BuildProperties>
-void kindi::repository::add( const kindi::detail::build_info<T, BuildProperties>& build_info )
+void kindi::detail::repository::add( const kindi::detail::build_info<T, BuildProperties>& build_info )
 {
 	type_info new_type_info = type_info( kindi::type_wrapper<T>() );
 	
@@ -154,11 +154,11 @@ void kindi::repository::add( const kindi::detail::build_info<T, BuildProperties>
 	// insert/override the provider for the provider of the new type
 	// allows the user to ask for a provider<Type>
 	type_info new_type_provider_info = type_info( kindi::type_wrapper<provider<T> >() );
-	m_mapTypes[ new_type_provider_info ].reset( new provider_provider( pProvider ) );
+	m_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
 }
 
 template <typename T>
-T* kindi::repository::construct()
+T* kindi::detail::repository::construct()
 {
 	// checks that the type is complete
 	// issues a compilation error if it's not ( from boost::checked_delete )
@@ -170,9 +170,9 @@ T* kindi::repository::construct()
 }
 
 template <typename T>
-kindi::provider<T>* kindi::repository::get_provider()
+kindi::provider<T>* kindi::detail::repository::get_provider()
 {
-	kindi::type_info searched_type = kindi::type_info( kindi::type_wrapper<T>() );
+	type_info searched_type = type_info( kindi::type_wrapper<T>() );
 
 	types_map_t::iterator it = m_mapTypes.find( searched_type );
 	if( it == m_mapTypes.end() )
@@ -184,7 +184,7 @@ kindi::provider<T>* kindi::repository::get_provider()
 }
 
 template <typename T, typename BuildProperties>
-void kindi::repository::add_if_unknown( const kindi::detail::build_info<T, BuildProperties>& build_info )
+void kindi::detail::repository::add_if_unknown( const kindi::detail::build_info<T, BuildProperties>& build_info )
 {
 	type_info new_type_info = type_info( kindi::type_wrapper<T>() );
 	
