@@ -1,0 +1,122 @@
+// ***************************************************************************
+//  (C) Copyright Sébastien Débia 2011.
+//  Distributed under the Boost Software License, Version 1.0.
+//  (See accompanying file LICENSE_1_0.txt or copy at 
+//  http://www.boost.org/LICENSE_1_0.txt)
+//
+//  See http://code.google.com/p/kindi/ for the library home page.
+// ***************************************************************************
+
+
+#include <kindi/constructor.hpp>
+#include <kindi/injector.hpp>
+
+#include "../test_friendly_new.hpp"
+#include "../ExSTestClass.hpp"
+#include "../ExSChecks.hpp"
+
+#include <boost/test/unit_test.hpp>
+
+#include <boost/scoped_ptr.hpp>
+
+namespace
+{
+	class Abstract
+	{
+	public:
+		virtual void doSmthing() = 0;
+		virtual ~Abstract()
+		{
+		};
+	};
+
+	class Concrete: public Abstract
+	{
+	public:
+		void doSmthing()
+		{
+			if( this == NULL )
+				throw std::runtime_error( "this == NULL!" );
+			m_n = 42;
+		}
+		virtual ~Concrete()
+		{
+		};
+		int m_n;
+	};
+
+	class FailingConcrete: public Abstract, public ExSTestClass
+	{
+	public:
+		void doSmthing()
+		{
+			if( this == NULL )
+				throw std::runtime_error( "this == NULL!" );
+			m_n = 42;
+		}
+		virtual ~FailingConcrete()
+		{
+		};
+		int m_n;
+	};
+}
+
+
+void addFailingConcrete( kindi::injector& inj )
+{
+	inj.add( kindi::type<FailingConcrete>() );
+}
+void constructFailingConcrete( kindi::injector& inj )
+{
+	boost::scoped_ptr<FailingConcrete> p1( inj.construct<FailingConcrete>() );
+}
+BOOST_AUTO_TEST_CASE( ex_safety_simple )
+{
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &addFailingConcrete ) );
+
+	inj.add( kindi::type<FailingConcrete>() );
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcrete ) );
+}
+
+BOOST_AUTO_TEST_CASE( ex_safety_instance )
+{
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	
+	inj.add( kindi::type<FailingConcrete>().instance( new FailingConcrete() ) );
+	
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcrete ) );
+}
+
+void constructAbstract( kindi::injector& inj )
+{
+	Abstract* p1( inj.construct<Abstract>() );
+	p1 = p1 && NULL;
+}
+BOOST_AUTO_TEST_CASE( ex_safety_implementation )
+{
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	
+	inj.add( kindi::type<Abstract>().implementation<FailingConcrete>() );
+	
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructAbstract ) );
+}
+
+void constructFailingConcreteProvider( kindi::injector& inj )
+{
+	kindi::provider<FailingConcrete>* p1( inj.construct<kindi::provider<FailingConcrete> >() );
+	p1 = p1 && NULL;
+}
+BOOST_AUTO_TEST_CASE( ex_safety_provider )
+{
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	
+	inj.add( kindi::type<FailingConcrete>() );
+	
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcreteProvider ) );
+}
