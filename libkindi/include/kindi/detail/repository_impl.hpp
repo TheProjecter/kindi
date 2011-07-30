@@ -53,31 +53,32 @@ void kindi::detail::repository::declare_type_if_unknown()
 template <typename T, typename BuildProperties>
 void kindi::detail::repository::add( const kindi::detail::build_info<T, BuildProperties>& build_info )
 {
+	// from now on we will work on a copy of the repository to ensure exception safety
+	kindi::detail::repository tmp_rep = kindi::detail::repository( *this );
+	
 	type_info new_type_info = type_info( kindi::type_wrapper<T>() );
 	
 	typedef typename traits::constructor<T>::type constructor_t;
 	
 	// recursively register parameters types and bound types
-	auto_recursive_registration<T, BuildProperties>( *this )();
+	auto_recursive_registration<T, BuildProperties> arr( tmp_rep );
+	arr();
 	
 	// creates the provider for the new type
 	abstract_base_provider* pProvider =
-		detail::get_provider<T, typename BuildProperties::implementation>( *this, build_info.m_instance,
+		detail::get_provider<T, typename BuildProperties::implementation>( *m_referent, build_info.m_instance,
 			typename BuildProperties::has_instance() );
 	
-	// from now on we will work on a copy of the map to ensure exception safety
-	types_map_t tmp_mapTypes( m_mapTypes );
-	
 	// insert/override the provider for the new type
-	tmp_mapTypes[ new_type_info ].reset( pProvider );
+	tmp_rep.m_mapTypes[ new_type_info ].reset( pProvider );
 	
 	// insert/override the provider for the provider of the new type
 	// allows the user to ask for a provider<Type>
 	type_info new_type_provider_info = type_info( kindi::type_wrapper<provider<T> >() );
-	tmp_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
+	tmp_rep.m_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
 	
 	// we're done we can swap the new map and the old one
-	std::swap( m_mapTypes, tmp_mapTypes );
+	swap( tmp_rep );
 }
 
 template <typename T>

@@ -29,6 +29,35 @@ namespace kindi
 		{
 		public:
 			/**
+			 * Constructor
+			 */
+			repository()
+			:m_referent( this )
+			{
+			}
+			
+			/**
+			 * copy constructor
+			 * @param rhs right hand side
+			 */
+			repository( const repository& rhs )
+			:m_mapTypes( rhs.m_mapTypes ),
+			 m_referent( rhs.m_referent )
+			{
+			}
+			
+			/**
+			 * assignement operator
+			 * @param rhs right hand side, by value
+			 * @return
+			 */
+			repository& operator =( repository rhs )
+			{
+				swap( rhs );
+				return *this;
+			}
+			
+			/**
 			 * declares a new type in the type repository
 			 * @deprecated
 			 */
@@ -71,9 +100,22 @@ namespace kindi
 			template <typename T, typename BuildProperties>
 			void add_if_unknown( const kindi::detail::build_info<T, BuildProperties>& build_info );
 
+			 void swap( repository& rhs )
+			 {
+				 std::swap( m_referent, rhs.m_referent );
+				 std::swap( m_mapTypes, rhs.m_mapTypes );
+			 }
+			 
 		private:
 			typedef std::map<type_info, boost::shared_ptr<abstract_base_provider> > types_map_t;
 			types_map_t m_mapTypes;
+			
+			/**
+			 * pointer to the real repository.
+			 * it is used for classes which needs a pointer back to the repository
+			 * avoids giving them a pointer to a temporary
+			 */
+			repository* m_referent;
 		};
 	}
 }

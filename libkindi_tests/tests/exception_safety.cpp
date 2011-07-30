@@ -59,6 +59,19 @@ namespace
 		};
 		int m_n;
 	};
+
+	class FailingConcreteDep: public ExSTestClass
+	{
+	public:
+		KINDI_CONSTRUCTOR( FailingConcreteDep, (FailingConcrete* p) )
+		: m_p( p )
+		{
+		}
+		virtual ~FailingConcreteDep()
+		{
+		};
+		boost::shared_ptr<FailingConcrete> m_p;
+	};
 }
 
 
@@ -79,6 +92,25 @@ BOOST_AUTO_TEST_CASE( ex_safety_simple )
 
 	inj.add( kindi::type<FailingConcrete>() );
 	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcrete ) );
+}
+
+void addFailingConcreteDep( kindi::injector& inj )
+{
+	inj.add( kindi::type<FailingConcreteDep>() );
+}
+void constructFailingConcreteDep( kindi::injector& inj )
+{
+	boost::scoped_ptr<FailingConcreteDep> p1( inj.construct<FailingConcreteDep>() );
+}
+BOOST_AUTO_TEST_CASE( ex_safety_simple_tree )
+{
+	kindi::injector inj;
+	inj.add( kindi::type<Concrete>() );
+	
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &addFailingConcreteDep ) );
+
+	inj.add( kindi::type<FailingConcreteDep>() );
+	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcreteDep ) );
 }
 
 BOOST_AUTO_TEST_CASE( ex_safety_instance )
