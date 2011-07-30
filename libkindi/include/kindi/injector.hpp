@@ -32,6 +32,11 @@ namespace kindi
 		{
 			return m_r.construct<T>();
 		}
+		
+		bool operator ==( const injector& rhs )
+		{
+			return m_r == rhs.m_r;	
+		}
 
 	private:
 		

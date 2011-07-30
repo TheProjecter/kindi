@@ -13,10 +13,17 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "possible_failure.hpp"
+
+bool enable_failing_new::s_failing_new = false;
+
 void* operator new( std::size_t size ) throw( std::bad_alloc )
 {
 	while( true )
 	{
+		if( enable_failing_new::s_failing_new == true )
+			failure::simulatePossibleFailureT<std::bad_alloc>();
+		
 		void* result = std::malloc( size );
 		std::memset( result, 0, size );
 		if( result )

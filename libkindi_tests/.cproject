@@ -37,6 +37,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1540686585" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="BOOST_TEST_DYN_LINK"/>
+									<listOptionValue builtIn="false" value="KINDI_DEBUG"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1244334145" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>

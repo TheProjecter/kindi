@@ -7,6 +7,8 @@
 //  See http://code.google.com/p/kindi/ for the library home page.
 // ***************************************************************************
 
+#pragma once
+
 #include "kindi/detail/repository.hpp"
 
 #include "kindi/type.hpp"
@@ -63,13 +65,19 @@ void kindi::detail::repository::add( const kindi::detail::build_info<T, BuildPro
 		detail::get_provider<T, typename BuildProperties::implementation>( *this, build_info.m_instance,
 			typename BuildProperties::has_instance() );
 	
+	// from now on we will work on a copy of the map to ensure exception safety
+	types_map_t tmp_mapTypes( m_mapTypes );
+	
 	// insert/override the provider for the new type
-	m_mapTypes[ new_type_info].reset( pProvider );
+	tmp_mapTypes[ new_type_info ].reset( pProvider );
 	
 	// insert/override the provider for the provider of the new type
 	// allows the user to ask for a provider<Type>
 	type_info new_type_provider_info = type_info( kindi::type_wrapper<provider<T> >() );
-	m_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
+	tmp_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
+	
+	// we're done we can swap the new map and the old one
+	std::swap( m_mapTypes, tmp_mapTypes );
 }
 
 template <typename T>

@@ -58,6 +58,8 @@ namespace kindi
 				return m_instance;
 			}
 			
+			virtual ~provider_with_instance(){}
+			
 		private:
 			ConstructedType* m_instance;
 		};

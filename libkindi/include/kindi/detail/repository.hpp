@@ -55,6 +55,17 @@ namespace kindi
 			 */
 			template <typename T>
 			provider<T>* get_provider();
+
+			/**
+			 * comparison operator.
+			 * for tests purposes
+			 * @param rhs right hand side
+			 * @return true if the repositories are equal (aka contain the same types)
+			 */
+			bool operator ==( const repository& rhs )
+			{
+				return m_mapTypes == rhs.m_mapTypes;
+			}
 			
 		private:
 			template <typename T, typename BuildProperties>

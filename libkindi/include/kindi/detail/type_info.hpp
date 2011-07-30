@@ -39,11 +39,18 @@ namespace kindi
 
 		private:
 			const std::type_info *m_info;
+
+#ifdef KINDI_DEBUG
+			const char* m_name;
+#endif
 		};
 
 		template <typename T>
 		type_info::type_info( type_wrapper<T> )
 			: m_info( &typeid(typename type_wrapper<T>::type) )
+#ifdef KINDI_DEBUG
+			,m_name( m_info->name() )
+#endif
 		{
 		}
 

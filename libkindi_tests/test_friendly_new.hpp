@@ -11,6 +11,22 @@
 
 #include <new>
 
+#define ENABLE_FAILING_NEW enable_failing_new efn_8f2ecb40ba3011e0962b0800200c9a66;
+
+struct enable_failing_new
+{
+	enable_failing_new()
+	{
+		s_failing_new = true;
+	}
+	~enable_failing_new()
+	{
+		s_failing_new = false;
+	}
+	
+	static bool s_failing_new; // maybe it should be elsewhere
+};
+
 void* operator new(std::size_t size) throw(std::bad_alloc) ;
 
 void operator delete(void* ptr) throw();
