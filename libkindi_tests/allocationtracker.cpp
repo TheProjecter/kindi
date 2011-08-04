@@ -9,6 +9,7 @@
 
 #include "allocationtracker.hpp"
 
+#include "possible_failure.hpp"
 #include "stacktrace.hpp"
 
 #include <boost/format.hpp>
@@ -46,6 +47,7 @@ void allocation_tracker::alloc( void* addr, std::size_t size )
 	if( !s_leak_detection )
 		return;
 	
+	DISABLE_AND_RESTORE_FAILURES;
 	DISABLE_AND_RESTORE_LEAK_DETECTION;
 	
 	allocation_info ai;

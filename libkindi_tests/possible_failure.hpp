@@ -28,6 +28,23 @@ struct enable_failures
 	static bool s_failures_enabled; // maybe it should be elsewhere
 };
 
+#define DISABLE_AND_RESTORE_FAILURES disable_and_restore_failures drf_8f2ecb40ba3011e0962b0800200c9a66;
+
+struct disable_and_restore_failures
+{
+	disable_and_restore_failures()
+	{
+		m_saved_state = enable_failures::s_failures_enabled;
+		enable_failures::s_failures_enabled = false;
+	}
+	~disable_and_restore_failures()
+	{
+		enable_failures::s_failures_enabled = m_saved_state;
+	}
+
+	bool m_saved_state;
+};
+
 class failure
 {
 public:

@@ -177,11 +177,10 @@ BOOST_AUTO_TEST_CASE( ex_safety_provider )
 	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcreteProvider ) );
 }
 
-namespace{
 void addFailingConcreteProviderDep( kindi::injector& inj )
 {
 	inj.add( kindi::type<FailingConcreteProviderDep>() );
-}}
+}
 void constructFailingConcreteProviderDep( kindi::injector& inj )
 {
 	boost::shared_ptr<FailingConcreteProviderDep> p1( inj.construct<FailingConcreteProviderDep>() );
