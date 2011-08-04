@@ -21,6 +21,8 @@
 
 #include <boost/function_types/function_arity.hpp>
 
+#include <boost/shared_ptr.hpp>
+
 namespace kindi
 {
 	namespace detail
@@ -71,7 +73,7 @@ namespace kindi
 
 		public:
 			build_info()
-			: m_instance( NULL )
+			: m_instance()
 			{
 			    // cheks that the constructor declaration was defined for this
 			    //  particular type and not inherited
@@ -121,7 +123,7 @@ namespace kindi
 			 * @param pInstance instance
 			 * @return a new build_info object with the correct instance
 			 */
-			typename new_binfo<self_type, has_instance_tag, boost::mpl::true_>::type instance( T* pInstance ) const
+			typename new_binfo<self_type, has_instance_tag, boost::mpl::true_>::type instance( boost::shared_ptr<T> pInstance ) const
 			{
 				typename new_binfo<self_type, has_instance_tag, boost::mpl::true_>::type b( *this );
 				b.m_instance = pInstance;
@@ -141,7 +143,7 @@ namespace kindi
 			/**
 			 * pointer to the instance if any (see provider_with_instance)
 			 */
-			T* m_instance;
+			boost::shared_ptr<T> m_instance;
 		};
 	} // ns detail
 } // ns kindi

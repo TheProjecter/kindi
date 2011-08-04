@@ -28,7 +28,7 @@ namespace kindi
 	{
 		template <typename T, typename Implementation>
 		abstract_base_provider* get_provider( repository& r,
-		                                      T* instance,
+		                                      boost::shared_ptr<T> instance,
 		                                      boost::mpl::false_ /* has instance */ )
 		{
 			return new generic_provider<T, Implementation>( r );
@@ -36,7 +36,7 @@ namespace kindi
 
 		template <typename T, typename Implementation>
 		abstract_base_provider* get_provider( repository& r,
-		                                      T* instance,
+		                                      boost::shared_ptr<T> instance,
 		                                      boost::mpl::true_ /* has instance */ )
 		{
 			return new provider_with_instance<T>( instance );
@@ -65,24 +65,25 @@ void kindi::detail::repository::add( const kindi::detail::build_info<T, BuildPro
 	arr();
 	
 	// creates the provider for the new type
-	abstract_base_provider* pProvider =
+	boost::shared_ptr<abstract_base_provider> pProvider(
 		detail::get_provider<T, typename BuildProperties::implementation>( *m_referent, build_info.m_instance,
-			typename BuildProperties::has_instance() );
+			typename BuildProperties::has_instance() ) );
 	
 	// insert/override the provider for the new type
-	tmp_rep.m_mapTypes[ new_type_info ].reset( pProvider );
+	tmp_rep.m_mapTypes[ new_type_info ] = pProvider;
 	
 	// insert/override the provider for the provider of the new type
 	// allows the user to ask for a provider<Type>
 	type_info new_type_provider_info = type_info( kindi::type_wrapper<provider<T> >() );
-	tmp_rep.m_mapTypes[ new_type_provider_info ].reset( new detail::provider_provider( pProvider ) );
+	boost::shared_ptr<abstract_base_provider> pProvider_provider( new detail::provider_provider( pProvider ) );
+	tmp_rep.m_mapTypes[ new_type_provider_info ] = pProvider_provider;
 	
 	// we're done we can swap the new map and the old one
 	swap( tmp_rep );
 }
 
 template <typename T>
-T* kindi::detail::repository::construct()
+boost::shared_ptr<T> kindi::detail::repository::construct()
 {
 	// checks that the type is complete
 	// issues a compilation error if it's not ( from boost::checked_delete )

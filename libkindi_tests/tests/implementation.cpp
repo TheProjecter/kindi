@@ -60,26 +60,26 @@ BOOST_AUTO_TEST_CASE( implementation_of_abstract )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Abstract>().implementation<Concrete>() );
-	Abstract* p1 = inj.construct<Abstract>();
-	Abstract* p2 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p1 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();
-	BOOST_REQUIRE( dynamic_cast<Concrete*>( p1 ) != NULL );
-	BOOST_REQUIRE( dynamic_cast<Concrete*>( p2 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<Concrete>( p1 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<Concrete>( p2 ) != NULL );
 }
 
 BOOST_AUTO_TEST_CASE( implementation_of_concrete ) // usefull? 
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
-	Concrete* p1 = inj.construct<Concrete>();
-	Concrete* p2 = inj.construct<Concrete>();
+	boost::shared_ptr<Concrete> p1 = inj.construct<Concrete>();
+	boost::shared_ptr<Concrete> p2 = inj.construct<Concrete>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();
-	BOOST_REQUIRE( dynamic_cast<ConcreteChild*>( p1 ) != NULL );
-	BOOST_REQUIRE( dynamic_cast<ConcreteChild*>( p2 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<ConcreteChild>( p1 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<ConcreteChild>( p2 ) != NULL );
 }
 
 BOOST_AUTO_TEST_CASE( chained_implementations ) // usefull? 
@@ -87,11 +87,11 @@ BOOST_AUTO_TEST_CASE( chained_implementations ) // usefull?
 	kindi::injector inj;
 	inj.add( kindi::type<Abstract>().implementation<Concrete>() );
 	inj.add( kindi::type<Concrete>().implementation<ConcreteChild>() );
-	Abstract* p1 = inj.construct<Abstract>();
-	Abstract* p2 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p1 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
 	p2->doSmthing();
-	BOOST_REQUIRE( dynamic_cast<ConcreteChild*>( p1 ) != NULL );
-	BOOST_REQUIRE( dynamic_cast<ConcreteChild*>( p2 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<ConcreteChild>( p1 ) != NULL );
+	BOOST_REQUIRE( boost::dynamic_pointer_cast<ConcreteChild>( p2 ) != NULL );
 }

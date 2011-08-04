@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 namespace kindi
 {
 	/**
@@ -20,7 +22,7 @@ namespace kindi
 		/**
 		 * Constructs an instance
 		 */
-		virtual void* construct_untyped() const = 0;
+		virtual boost::shared_ptr<void> construct_untyped() const = 0;
 
 		virtual ~abstract_base_provider(){}
 	};
@@ -35,7 +37,7 @@ namespace kindi
 		/**
 		 * Constructs an instance
 		 */
-		virtual void* construct_untyped() const
+		virtual boost::shared_ptr<void> construct_untyped() const
 		{
 			return construct();
 		}
@@ -44,7 +46,7 @@ namespace kindi
 		 * Constructs an instance
 		 * @return pointer to the new instance
 		 */
-		virtual ConstructedType* construct() const = 0;
+		virtual boost::shared_ptr<ConstructedType> construct() const = 0;
 
 		virtual ~provider(){}
 	};

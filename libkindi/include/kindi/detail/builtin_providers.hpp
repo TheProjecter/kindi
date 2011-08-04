@@ -20,11 +20,12 @@ namespace kindi
 		template <typename ConstructedType, typename Implementation>
 		class generic_provider : public provider<ConstructedType>
 		{
-			ConstructedType* construct_impl( boost::true_type /* type _is not_ bound to an other */ ) const
+			boost::shared_ptr<ConstructedType> construct_impl( boost::true_type /* type _is not_ bound to an other */ ) const
 			{
-				return detail::construction_helper<Implementation, typename traits::constructor<Implementation>::type >()( m_r );
+				return  boost::shared_ptr<ConstructedType>( 
+					detail::construction_helper<Implementation, typename traits::constructor<Implementation>::type >()( m_r ) );
 			}
-			ConstructedType* construct_impl( boost::false_type /* type _is_ bound to an other */ ) const
+			boost::shared_ptr<ConstructedType> construct_impl( boost::false_type /* type _is_ bound to an other */ ) const
 			{
 				return m_r.get_provider<Implementation>()->construct();
 			}
@@ -35,7 +36,7 @@ namespace kindi
 			{
 			}
 			
-			virtual ConstructedType* construct() const
+			virtual boost::shared_ptr<ConstructedType> construct() const
 			{
 				return construct_impl( boost::is_same<ConstructedType, Implementation>() );
 			}
@@ -48,12 +49,12 @@ namespace kindi
 		class provider_with_instance : public provider<ConstructedType>
 		{
 		public:
-			provider_with_instance( ConstructedType* instance )
+			provider_with_instance( boost::shared_ptr<ConstructedType> instance )
 			:m_instance( instance )
 			{
 			}
 			
-			virtual ConstructedType* construct() const
+			virtual boost::shared_ptr<ConstructedType> construct() const
 			{
 				return m_instance;
 			}
@@ -61,13 +62,13 @@ namespace kindi
 			virtual ~provider_with_instance(){}
 			
 		private:
-			ConstructedType* m_instance;
+			boost::shared_ptr<ConstructedType> m_instance;
 		};
 		
 		class provider_provider : public provider_with_instance<abstract_base_provider>
 		{
 		public:
-			provider_provider( abstract_base_provider* pProvider )
+			provider_provider( boost::shared_ptr<abstract_base_provider> pProvider )
 			:provider_with_instance( pProvider )
 			{}
 			

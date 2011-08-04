@@ -59,7 +59,7 @@ namespace kindi
 				typedef typename boost::mpl::at<params, boost::mpl::int_<0> >::type param0_t;
 				typedef typename traits::basic_type<param0_t>::type param0_basic_t;
 				
-				param0_basic_t* pParam0 = static_cast<param0_basic_t*>( r.construct<param0_basic_t>() );
+				boost::shared_ptr<param0_basic_t> pParam0 = r.construct<param0_basic_t>();
 				
 				return new T( pParam0 );
 			}
@@ -77,8 +77,8 @@ namespace kindi
 				typedef typename boost::mpl::at<params, boost::mpl::int_<1> >::type param1_t;
 				typedef typename traits::basic_type<param1_t>::type param1_basic_t;
 				
-				param0_basic_t* pParam0 = static_cast<param0_basic_t*>( r.construct<param0_basic_t>() );
-				param1_basic_t* pParam1 = static_cast<param1_basic_t*>( r.construct<param1_basic_t>() );
+				boost::shared_ptr<param0_basic_t> pParam0 = r.construct<param0_basic_t>();
+				boost::shared_ptr<param1_basic_t> pParam1 = r.construct<param1_basic_t>();
 				
 				return new T( pParam0, pParam1 );
 			}

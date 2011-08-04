@@ -44,7 +44,7 @@ namespace
 	class ComposedType
 	{
 	public:
-		KINDI_CONSTRUCTOR( ComposedType, (Concrete* pC) )
+		KINDI_CONSTRUCTOR( ComposedType, (boost::shared_ptr<Concrete> pC) )
 			: m_pC( pC )
 		{
 		}
@@ -57,13 +57,13 @@ namespace
 		}
 
 	private:
-		Concrete* m_pC;
+		boost::shared_ptr<Concrete> m_pC;
 	};
 
 	class TypeDependentOnComposedTypeProvider
 	{
 	public:
-		KINDI_CONSTRUCTOR( TypeDependentOnComposedTypeProvider, (kindi::provider<ComposedType>* pC) )
+		KINDI_CONSTRUCTOR( TypeDependentOnComposedTypeProvider, (boost::shared_ptr<kindi::provider<ComposedType> > pC) )
 			: 	m_pC( pC ),
 				m_p1( m_pC->construct() ),
 				m_p2( m_pC->construct() )
@@ -78,9 +78,9 @@ namespace
 			m_p2->doSmthing();
 		}
 
-		kindi::provider<ComposedType>* m_pC;
-		ComposedType* m_p1;
-		ComposedType* m_p2;
+		boost::shared_ptr<kindi::provider<ComposedType> > m_pC;
+		boost::shared_ptr<ComposedType> m_p1;
+		boost::shared_ptr<ComposedType> m_p2;
 	};
 }
 
@@ -88,10 +88,10 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>() );
-	kindi::provider<Concrete>* p = inj.construct<kindi::provider<Concrete> >();
+	boost::shared_ptr<kindi::provider<Concrete> > p = inj.construct<kindi::provider<Concrete> >();
 
-	Abstract* p1 = p->construct();
-	Abstract* p2 = p->construct();
+	boost::shared_ptr<Abstract> p1 = p->construct();
+	boost::shared_ptr<Abstract> p2 = p->construct();
 
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
@@ -101,12 +101,12 @@ BOOST_AUTO_TEST_CASE( provider_for_concrete )
 BOOST_AUTO_TEST_CASE( provider_for_concrete_with_instance )
 {
 	kindi::injector inj;
-	Concrete* pConcreteInstance = new Concrete();
+	boost::shared_ptr<Concrete> pConcreteInstance( new Concrete() );
 	inj.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
-	kindi::provider<Concrete>* p = inj.construct<kindi::provider<Concrete> >();
+	boost::shared_ptr<kindi::provider<Concrete> > p = inj.construct<kindi::provider<Concrete> >();
 
-	Abstract* p1 = p->construct();
-	Abstract* p2 = p->construct();
+	boost::shared_ptr<Abstract> p1 = p->construct();
+	boost::shared_ptr<Abstract> p2 = p->construct();
 
 	BOOST_REQUIRE( p1 == p2 );
 	BOOST_REQUIRE( p2 == pConcreteInstance );
@@ -118,10 +118,10 @@ BOOST_AUTO_TEST_CASE( provider_for_composed )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<ComposedType>() );
-	kindi::provider<ComposedType>* p = inj.construct<kindi::provider<ComposedType> >();
+	boost::shared_ptr<kindi::provider<ComposedType> > p = inj.construct<kindi::provider<ComposedType> >();
 
-	ComposedType* p1 = p->construct();
-	ComposedType* p2 = p->construct();
+	boost::shared_ptr<ComposedType> p1 = p->construct();
+	boost::shared_ptr<ComposedType> p2 = p->construct();
 
 	BOOST_REQUIRE( p1 != p2 );
 	p1->doSmthing();
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE( provider_injection )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<TypeDependentOnComposedTypeProvider>() );
-	TypeDependentOnComposedTypeProvider* p = inj.construct<TypeDependentOnComposedTypeProvider>();
+	boost::shared_ptr<TypeDependentOnComposedTypeProvider> p = inj.construct<TypeDependentOnComposedTypeProvider>();
 
 	BOOST_REQUIRE( p->m_p1 != p->m_p2 );
 	p->doSmthing();

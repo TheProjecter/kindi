@@ -19,9 +19,21 @@ namespace kindi
 	namespace traits
 	{
 		template <typename T>
+		struct remove_shared_ptr
+		{
+			typedef T type;
+		};
+		template <typename T>
+		struct remove_shared_ptr<boost::shared_ptr<T> >
+		{
+			typedef T type;
+		};
+		
+		template <typename T>
 		struct basic_type
 		{
-			typedef typename boost::remove_pointer<T>::type no_ptr;
+			typedef typename remove_shared_ptr<T>::type no_shptr;
+			typedef typename boost::remove_pointer<no_shptr>::type no_ptr;
 			typedef typename boost::remove_cv<no_ptr>::type no_cv;
 			typedef typename boost::remove_reference<no_cv>::type type;
 		};

@@ -28,7 +28,7 @@ namespace kindi
 		}
 
 		template <typename T>
-		T* construct()
+		boost::shared_ptr<T> construct()
 		{
 			return m_r.construct<T>();
 		}

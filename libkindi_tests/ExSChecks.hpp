@@ -12,6 +12,7 @@
 #pragma once
 
 #include "possible_failure.hpp"
+#include "allocationtracker.hpp"
 
 #include <boost/format.hpp>
 
@@ -24,6 +25,20 @@
 template <class T>
 void CheckInvariant( const T& )
 {
+}
+
+template <class Value, class Operation>
+void PrintingStrongCheck( const Value& v, const Operation& op )
+{
+	try
+	{
+		StrongCheck( v, op );
+	}
+	catch( std::runtime_error& ex )
+	{
+		std::cerr << ex.what() << "\n";
+		throw;
+	};
 }
 
 /**
@@ -44,15 +59,20 @@ void StrongCheck( const Value& v, const Operation& op )
 			{
 				ENABLE_FAILURES;
 				ENABLE_FAILING_NEW;
-				op( duplicate ); // Try the operation 
+				ENABLE_LEAK_DETECTION;
+				op( duplicate ); // Try the operation
 			}
 			succeeded = true;
 		}
 		catch( ... ) // Catch all exceptions 
 		{
-			bool unchanged = duplicate == v; // Test strong guarantee 
+			// test strong guarantee 
+			bool unchanged = duplicate == v;
 			if( !unchanged )
 				throw( boost::format( "strong guaranty check failed" ) );
+
+			// test no memory was leaked
+			allocation_tracker::inspect();
 		}
 		// Specialize as desired for each container type, to check 
 		// integrity. For example, size() == distance(begin(),end()) 

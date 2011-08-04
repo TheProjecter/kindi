@@ -14,6 +14,7 @@
 #include <cstring>
 
 #include "possible_failure.hpp"
+#include "allocationtracker.hpp"
 
 bool enable_failing_new::s_failing_new = false;
 
@@ -27,7 +28,10 @@ void* operator new( std::size_t size ) throw( std::bad_alloc )
 		void* result = std::malloc( size );
 		std::memset( result, 0, size );
 		if( result )
+		{
+			allocation_tracker::alloc( result, size );
 			return result;
+		}
 
 		std::new_handler nh = std::set_new_handler( 0 );
 		std::set_new_handler( nh );  // put it back
@@ -41,11 +45,13 @@ void* operator new( std::size_t size ) throw( std::bad_alloc )
 	}
 	return (void*)1;    // avoids a warning
 }
+
 void operator delete( void* ptr ) throw()
 {
 	if( ptr )
 	{
 		std::free( ptr );
+		allocation_tracker::dealloc( ptr );
 	}
 }
 

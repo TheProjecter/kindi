@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="BOOST_TEST_DYN_LINK"/>
 									<listOptionValue builtIn="false" value="KINDI_DEBUG"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.other.other.440471370" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 " valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1244334145" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1820005970" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
@@ -50,6 +51,7 @@
 								<option id="gnu.cpp.link.option.paths.81745834" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/libkindi/Debug}&quot;"/>
 								</option>
+								<option id="gnu.cpp.link.option.flags.1361784944" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="-rdynamic" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.726436052" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

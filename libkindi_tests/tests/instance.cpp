@@ -43,10 +43,10 @@ namespace
 BOOST_AUTO_TEST_CASE( instance_of_concrete )
 {
 	kindi::injector inj;
-	Concrete* pConcreteInstance = new Concrete();
+	boost::shared_ptr<Concrete> pConcreteInstance( new Concrete() );
 	inj.add( kindi::type<Concrete>().instance( pConcreteInstance ) );
-	Abstract* p1 = inj.construct<Concrete>();
-	Abstract* p2 = inj.construct<Concrete>();
+	boost::shared_ptr<Abstract> p1 = inj.construct<Concrete>();
+	boost::shared_ptr<Abstract> p2 = inj.construct<Concrete>();
 	BOOST_REQUIRE( p1 == p2 );
 	BOOST_REQUIRE( p2 == pConcreteInstance );
 	p1->doSmthing();
@@ -56,10 +56,10 @@ BOOST_AUTO_TEST_CASE( instance_of_concrete )
 BOOST_AUTO_TEST_CASE( instance_of_abstract )
 {
 	kindi::injector inj;
-	Concrete* pConcreteInstance = new Concrete();
+	boost::shared_ptr<Concrete> pConcreteInstance( new Concrete() );
 	inj.add( kindi::type<Abstract>().instance( pConcreteInstance ) );
-	Abstract* p1 = inj.construct<Abstract>();
-	Abstract* p2 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p1 = inj.construct<Abstract>();
+	boost::shared_ptr<Abstract> p2 = inj.construct<Abstract>();
 	BOOST_REQUIRE( p1 == p2 );
 	BOOST_REQUIRE( p2 == pConcreteInstance );
 	p1->doSmthing();

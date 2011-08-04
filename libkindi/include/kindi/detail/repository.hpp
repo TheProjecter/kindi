@@ -75,12 +75,12 @@ namespace kindi
 			 * @return pointer to the new instance
 			 */
 			template <typename T>
-			T* construct();
+			boost::shared_ptr<T> construct();
 
 			/**
 			 * get the provider associated to this type
 			 * @return a pointer to the build_info
-			 * @throw std::runtime_exception if the type could not be found
+			 * @throw std::runtime_error if the type could not be found
 			 */
 			template <typename T>
 			provider<T>* get_provider();

@@ -33,6 +33,7 @@
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1134741413" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
 							<builder buildPath="${workspace_loc:/libkindi/Debug}" enableAutoBuild="true" id="cdt.managedbuild.target.gnu.builder.base.1273839568" keepEnvironmentInBuildfile="false" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="-1" superClass="cdt.managedbuild.target.gnu.builder.base"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.260638086" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base">
+								<option id="gnu.both.lib.option.flags.2121550425" name="Archiver flags" superClass="gnu.both.lib.option.flags" value="-r" valueType="string"/>
 								<outputType id="cdt.managedbuild.tool.gnu.archiver.output.1674593459" outputPrefix="" superClass="cdt.managedbuild.tool.gnu.archiver.output"/>
 							</tool>
 							<tool command="ccache g++" id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1162120028" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
@@ -44,6 +45,7 @@
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1759397168" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="KINDI_DEBUG"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.other.other.1440112504" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -rdynamic" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1960524007" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1270083911" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">

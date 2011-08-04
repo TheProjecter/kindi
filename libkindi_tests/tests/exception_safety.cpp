@@ -17,7 +17,20 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <boost/scoped_ptr.hpp>
+#include <boost/make_shared.hpp>
+#include <stdexcept>
+
+namespace
+{
+	#define PRINT_EXCEPT( S )					\
+    try {                                       \
+        S;                                      \
+    }											\
+    catch( std::runtime_error& ex ) {			\
+        std::cout << ex.what();					\
+        throw;									\
+    }  
+}
 
 namespace
 {
@@ -63,7 +76,7 @@ namespace
 	class FailingConcreteDep: public ExSTestClass
 	{
 	public:
-		KINDI_CONSTRUCTOR( FailingConcreteDep, (FailingConcrete* p) )
+		KINDI_CONSTRUCTOR( FailingConcreteDep, (boost::shared_ptr<FailingConcrete> p) )
 		: m_p( p )
 		{
 		}
@@ -76,7 +89,7 @@ namespace
 	class FailingConcreteProviderDep: public ExSTestClass
 	{
 	public:
-		KINDI_CONSTRUCTOR( FailingConcreteProviderDep, (kindi::provider<FailingConcreteDep>* p) )
+		KINDI_CONSTRUCTOR( FailingConcreteProviderDep, (boost::shared_ptr<kindi::provider<FailingConcreteDep> > p) )
 		: m_p( p->construct() )
 		{
 		}
@@ -94,17 +107,17 @@ void addFailingConcrete( kindi::injector& inj )
 }
 void constructFailingConcrete( kindi::injector& inj )
 {
-	boost::scoped_ptr<FailingConcrete> p1( inj.construct<FailingConcrete>() );
+	boost::shared_ptr<FailingConcrete> p1( inj.construct<FailingConcrete>() );
 }
 BOOST_AUTO_TEST_CASE( ex_safety_simple )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>() );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &addFailingConcrete ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &addFailingConcrete ) );
 
 	inj.add( kindi::type<FailingConcrete>() );
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcrete ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcrete ) );
 }
 
 void addFailingConcreteDep( kindi::injector& inj )
@@ -113,17 +126,17 @@ void addFailingConcreteDep( kindi::injector& inj )
 }
 void constructFailingConcreteDep( kindi::injector& inj )
 {
-	boost::scoped_ptr<FailingConcreteDep> p1( inj.construct<FailingConcreteDep>() );
+	boost::shared_ptr<FailingConcreteDep> p1( inj.construct<FailingConcreteDep>() );
 }
 BOOST_AUTO_TEST_CASE( ex_safety_simple_tree )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>() );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &addFailingConcreteDep ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &addFailingConcreteDep ) );
 
 	inj.add( kindi::type<FailingConcreteDep>() );
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcreteDep ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcreteDep ) );
 }
 
 BOOST_AUTO_TEST_CASE( ex_safety_instance )
@@ -131,15 +144,14 @@ BOOST_AUTO_TEST_CASE( ex_safety_instance )
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>() );
 	
-	inj.add( kindi::type<FailingConcrete>().instance( new FailingConcrete() ) );
+	inj.add( kindi::type<FailingConcrete>().instance( boost::make_shared<FailingConcrete>() ) );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcrete ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcrete ) );
 }
 
 void constructAbstract( kindi::injector& inj )
 {
-	Abstract* p1( inj.construct<Abstract>() );
-	p1 = p1 && NULL;
+	boost::shared_ptr<Abstract>( inj.construct<Abstract>() );
 }
 BOOST_AUTO_TEST_CASE( ex_safety_implementation )
 {
@@ -148,13 +160,12 @@ BOOST_AUTO_TEST_CASE( ex_safety_implementation )
 	
 	inj.add( kindi::type<Abstract>().implementation<FailingConcrete>() );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructAbstract ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructAbstract ) );
 }
 
 void constructFailingConcreteProvider( kindi::injector& inj )
 {
-	kindi::provider<FailingConcrete>* p1( inj.construct<kindi::provider<FailingConcrete> >() );
-	p1 = p1 && NULL;
+	boost::shared_ptr<kindi::provider<FailingConcrete> >( inj.construct<kindi::provider<FailingConcrete> >() );
 }
 BOOST_AUTO_TEST_CASE( ex_safety_provider )
 {
@@ -163,24 +174,25 @@ BOOST_AUTO_TEST_CASE( ex_safety_provider )
 	
 	inj.add( kindi::type<FailingConcrete>() );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcreteProvider ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcreteProvider ) );
 }
 
+namespace{
 void addFailingConcreteProviderDep( kindi::injector& inj )
 {
 	inj.add( kindi::type<FailingConcreteProviderDep>() );
-}
+}}
 void constructFailingConcreteProviderDep( kindi::injector& inj )
 {
-	boost::scoped_ptr<FailingConcreteProviderDep> p1( inj.construct<FailingConcreteProviderDep>() );
+	boost::shared_ptr<FailingConcreteProviderDep> p1( inj.construct<FailingConcreteProviderDep>() );
 }
 BOOST_AUTO_TEST_CASE( ex_safety_provider_tree )
 {
 	kindi::injector inj;
 	inj.add( kindi::type<Concrete>() );
 	
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &addFailingConcreteProviderDep ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &addFailingConcreteProviderDep ) );
 
 	inj.add( kindi::type<FailingConcreteProviderDep>() );
-	BOOST_REQUIRE_NO_THROW( StrongCheck( inj, &constructFailingConcreteProviderDep ) );
+	BOOST_REQUIRE_NO_THROW( PrintingStrongCheck( inj, &constructFailingConcreteProviderDep ) );
 }
