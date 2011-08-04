@@ -19,15 +19,11 @@
 // there is some serious ugliness involved in this function
 std::string stacktrace( unsigned int frames_to_skip )
 {
-	void* stack_addrs[50];
-	char** stack_strings = NULL;
-	int trace_size = 0;
-	
-	std::stringstream ss;
 	std::string str;
 
-	trace_size = backtrace( stack_addrs, 50 );
-	stack_strings = backtrace_symbols( stack_addrs, trace_size );
+	void* stack_addrs[50];
+	int trace_size = backtrace( stack_addrs, 50 );
+	char** stack_strings = backtrace_symbols( stack_addrs, trace_size );
 	
 	// skip frames_to_skip stack frames 
 	str += "[bt] backtrace:\n";
