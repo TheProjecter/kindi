@@ -35,7 +35,7 @@ std::string stacktrace( unsigned int frames_to_skip )
 	{
 		// for some super weird reason, using a stringstream or boost::format
 		// makes the leak disappear !
-		char tmp[500];
+		char tmp[4096];
 		sprintf( tmp, "[bt] #%d %s\n", i-frames_to_skip, stack_strings[i] );
 		str += tmp;
 	}
