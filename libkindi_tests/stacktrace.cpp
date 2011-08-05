@@ -9,11 +9,10 @@
 
 #include "stacktrace.hpp"
 
+
+#if defined(__GNUC__)
+
 #include <execinfo.h>
-
-#include <sstream>
-#include <boost/format.hpp>
-
 #include <stdio.h>
 
 // there is some serious ugliness involved in this function
@@ -40,3 +39,10 @@ std::string stacktrace( unsigned int frames_to_skip )
 
 	return str;
 }
+
+#else // #if defined(__GNUC__)
+std::string stacktrace( unsigned int frames_to_skip )
+{
+	return "stack trace only available with gcc";
+}
+#endif
