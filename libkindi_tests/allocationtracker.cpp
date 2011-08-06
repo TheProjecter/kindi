@@ -60,7 +60,8 @@ void allocation_tracker::dealloc( void* addr ) throw()
 {
 	if( !s_leak_detection )
 		return;
-	
+
+	DISABLE_AND_RESTORE_FAILURES;
 	DISABLE_AND_RESTORE_LEAK_DETECTION;
 
 	allocations_map_t::iterator it = s_allocation_maps().find( addr );
@@ -70,6 +71,7 @@ void allocation_tracker::dealloc( void* addr ) throw()
 
 void allocation_tracker::inspect()
 {
+	DISABLE_AND_RESTORE_FAILURES;
 	DISABLE_AND_RESTORE_LEAK_DETECTION;
 
 	if( s_allocation_maps().size() > 0 )
