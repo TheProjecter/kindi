@@ -15,7 +15,6 @@
 #include <execinfo.h>
 #include <stdio.h>
 
-// there is some serious ugliness involved in this function
 std::string stacktrace( unsigned int frames_to_skip )
 {
 	std::string str;
@@ -28,11 +27,7 @@ std::string stacktrace( unsigned int frames_to_skip )
 	str += "[bt] backtrace:\n";
 	for( int i = frames_to_skip; i < trace_size; ++i )
 	{
-		// for some super weird reason, using a stringstream or boost::format
-		// makes the leak disappear !
-		char tmp[4096];
-		sprintf( tmp, "[bt] #%d %s\n", i-frames_to_skip, stack_strings[i] );
-		str += tmp;
+		str += ( boost::format( "[bt] #%d %s\n") % (i-frames_to_skip) % (stack_strings[i]) ).str();
 	}
 	
 	free( stack_strings );
