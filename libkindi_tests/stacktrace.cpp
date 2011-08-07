@@ -14,6 +14,7 @@
 
 #include <execinfo.h>
 #include <stdio.h>
+#include <boost/format.hpp>
 
 std::string stacktrace( unsigned int frames_to_skip )
 {
